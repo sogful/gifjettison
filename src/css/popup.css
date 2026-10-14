@@ -19,13 +19,14 @@
 
 /* most colors are copied directly from yt */
 .popup {
+  overflow: hidden;
   color-scheme: light;
   font-family: "roboto", Arial, sans-serif;
   font-size: 13px;
   color: #0f0f0f;
   background: #fff;
 
-  --surface: #fff; --surfacecard: #fff;
+  --surface: #fff; --surfacecard: #f2f2f2;
   --text: #0f0f0f; --textsecondary: #606060;
   --line: #e5e5e5; --linesubtle: #f0f0f0;
   --accent: #065fd4; --focus: #065fd4;
@@ -36,7 +37,7 @@
   color: #f1f1f1;
   background: #0f0f0f;
 
-  --surface: #0f0f0f; --surfacecard: #181818;
+  --surface: #0f0f0f; --surfacecard: #272727;
   --text: #f1f1f1; --textsecondary: #aaa;
   --line: #303030; --linesubtle: #272727;
   --accent: #3ea6ff; --focus: #3ea6ff;
@@ -48,19 +49,25 @@
 .popup, .popup * {box-sizing: border-box}
 
 .popupbody {
-  width: 390px; max-height: 640px; 
-  margin: 0; overflow-y: auto;
+  width: 420px;
+  margin: 0;
   font-family: "roboto", Arial, sans-serif;
   font-size: 13px;
   color: var(--text);
   background: var(--surface);
 }
-.popupmain {padding: 0 14px 12px}
+.popupmain {padding: 0 12px 10px}
+
+.settingsform {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
 
 .popupheader {
-  position: sticky; display: flex;
+  display: flex;
   flex-direction: column; align-items: center;
-  z-index: 1; top: 0;
   padding: 13px 0 11px;
   color: var(--text);
   background: var(--surface);
@@ -76,9 +83,17 @@
 /*//////////////////////////////////////////////////////////////////////*/
 
 .category {
-  margin-top: 11px;
-  padding: 12px 12px 13px;
+  min-width: 0;
+  padding: 10px;
   background: var(--surfacecard);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+
+.giftubecategory {
+  grid-column: 1 / -1;
+  width: calc(50% - 4px);
+  justify-self: center;
 }
 
 .categoryheading {
@@ -121,7 +136,7 @@
 }
 
 .description, .fineprint {
-  margin: 6px 0 0;
+  margin: 5px 0 0;
   line-height: 1.35;
 }
 .description {
@@ -148,7 +163,7 @@
 
 .modeoptions {
   min-width: 0;
-  margin: 10px 0 0; 
+  margin: 8px 0 0;
   padding: 0; border: 0; 
 }
 .modeoptions:disabled {opacity: 0.45}
@@ -167,7 +182,7 @@
   grid-template-columns: 16px minmax(0, 1fr);
   column-gap: 8px;
   align-items: start;
-  margin-top: 7px;
+  margin-top: 5px;
   cursor: pointer;
 }
 

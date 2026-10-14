@@ -4,6 +4,7 @@
   const mediaselector = "img, video, source, [role='img'], [data-tenor-id], [data-gif-id], [data-gif]";
   const gifurl = /(?:\.gif(?:[?#\s,)]|$)|_webp_animated(?:_[^/?#\s,]+)?\.webp|(?:^|[/:.])tenor(?:\.|\/)|(?:^|[/:.])giphy(?:\.|\/))/i;
   const gifmarker = /\[\s*gif\s*:\s*(?:giphy|tenor)\s*:[^\]]+\]/i;
+  const giftubemarker = /\[\s*gif\s*:\s*(?:url\s*:\s*)?[a-z0-9_-]+\s*\]/i;
   const standaloneurl = /^\s*https?:\/\/[^\s]+\s*$/i;
   const hiddencommentclass = "gifcommenthidden";
   const hiddenmediaclass = "gifmediahidden";
@@ -138,6 +139,9 @@
     if (hasexplicitgifmarker(comment, rawtext) || tenoredmedia) {
       return {category: "ytgc", comment, model, attachment, image, rawtext, media};
     }
+    if (giftubemarker.test(rawtext)) {
+      return {category: "giftube", comment, model, attachment, image, rawtext, media};
+    }
 
     const renderedmedia = media.some(item =>
       item.tagName === "VIDEO" ||
@@ -182,7 +186,7 @@
   }
 
   function getrawreplacement(gif) {
-    const marker = gif.rawtext.match(gifmarker);
+    const marker = gif.rawtext.match(gifmarker) || gif.rawtext.match(giftubemarker);
     if (marker) return marker[0];
     const url = gif.rawtext.match(/https?:\/\/[^\s]+/i);
     return url ? url[0].replace(/[.,!?)]*$/, "") : gif.rawtext;
