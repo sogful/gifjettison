@@ -3,6 +3,14 @@
   "name": "GifJettison",
   "version": "1.0",
   "description": "hide gif comments under youtube videos!",
+  "author": "cv",
+  "homepage_url": "https://coolsite.cv",
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "gifjettison@cv",
+      "strict_min_version": "128.0"
+    }
+  },
   "content_scripts": [
     {
       "matches": ["https://www.youtube.com/*"],
