@@ -64,7 +64,6 @@
   padding: 13px 0 11px;
   color: var(--text);
   background: var(--surface);
-  border-bottom: 1px solid var(--line);
   text-align: center;
 }
 
@@ -80,8 +79,6 @@
   margin-top: 11px;
   padding: 12px 12px 13px;
   background: var(--surfacecard);
-  border: 1px solid var(--line);
-  border-radius: 12px;
 }
 
 .categoryheading {
@@ -151,8 +148,8 @@
 
 .modeoptions {
   min-width: 0;
-  margin: 10px 0 0; padding: 8px 0 0;
-  border: 0; border-top: 1px solid var(--linesubtle);
+  margin: 10px 0 0; 
+  padding: 0; border: 0; 
 }
 .modeoptions:disabled {opacity: 0.45}
 
