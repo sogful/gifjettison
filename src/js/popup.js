@@ -1,17 +1,20 @@
 (() => {
+
   const api = globalThis.browser || globalThis.chrome;
   const storagekey = "gifjettisonSettings";
   const defaults = {
-    normal: { enabled: true, mode: "remove" },
-    ytgc: { enabled: true, mode: "remove" },
-    giftube: { enabled: true, mode: "remove" }
+    normal: {enabled: true, mode: "remove"},
+    ytgc: {enabled: true, mode: "remove"},
+    giftube: {enabled: true, mode: "remove"}
   };
   const groups = {
-    normal: { toggle: ".normaltoggle", modes: ".normalmodes" },
-    ytgc: { toggle: ".ytgctoggle", modes: ".ytgcmodes" },
-    giftube: { toggle: ".giftubetoggle", modes: ".giftubemodes" }
+    normal: {toggle: ".normaltoggle", modes: ".normalmodes"},
+    ytgc: {toggle: ".ytgctoggle", modes: ".ytgcmodes"},
+    giftube: {toggle: ".giftubetoggle", modes: ".giftubemodes"}
   };
   const form = document.querySelector(".settingsform");
+
+  /*//////////////////////////////////////////////////////////////////////*/
 
   async function applytheme() {
     const fallback = matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
@@ -69,6 +72,8 @@
     return value;
   }
 
+  /*//////////////////////////////////////////////////////////////////////*/
+
   async function save() {
     try {
       await api.storage.local.set({ [storagekey]: readform() });
@@ -106,6 +111,6 @@
       if (areaname === "local" && changes[storagekey]) render(changes[storagekey].newValue);
     });
   }
-
   init();
+
 })();

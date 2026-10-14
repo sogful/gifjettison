@@ -1,4 +1,5 @@
 (() => {
+  
   const commentselector = "ytd-comment-view-model, ytd-comment-renderer";
   const mediaselector = "img, video, source, [role='img'], [data-tenor-id], [data-gif-id], [data-gif]";
   const gifurl = /(?:\.gif(?:[?#\s,)]|$)|_webp_animated(?:_[^/?#\s,]+)?\.webp|(?:^|[/:.])tenor(?:\.|\/)|(?:^|[/:.])giphy(?:\.|\/))/i;
@@ -8,12 +9,14 @@
   const hiddenmediaclass = "gifmediahidden";
   const placeholderclass = "gifplaceholder";
   const defaultsettings = {
-    normal: { enabled: true, mode: "remove" },
-    ytgc: { enabled: true, mode: "remove" },
-    giftube: { enabled: true, mode: "remove" }
+    normal: {enabled: true, mode: "remove"},
+    ytgc: {enabled: true, mode: "remove"},
+    giftube: {enabled: true, mode: "remove"}
   };
 
   let settings = defaultsettings;
+
+  /*//////////////////////////////////////////////////////////////////////*/
 
   function normalizesettings(value) {
     const result = {};
@@ -131,9 +134,9 @@
       values.some(value => /(?:tenor|giphy)/i.test(value))
     );
 
-    if (official) return { category: "normal", comment, model, attachment, image, rawtext, media };
+    if (official) return {category: "normal", comment, model, attachment, image, rawtext, media};
     if (hasexplicitgifmarker(comment, rawtext) || tenoredmedia) {
-      return { category: "ytgc", comment, model, attachment, image, rawtext, media };
+      return {category: "ytgc", comment, model, attachment, image, rawtext, media};
     }
 
     const renderedmedia = media.some(item =>
@@ -144,7 +147,7 @@
       item.tagName === "IMG"
     );
     if (renderedmedia || standaloneurl.test(rawtext)) {
-      return { category: "giftube", comment, model, attachment, image, rawtext, media };
+      return {category: "giftube", comment, model, attachment, image, rawtext, media};
     }
     return null;
   }
@@ -161,6 +164,8 @@
     });
     gif.comment.querySelector("." + placeholderclass)?.remove();
   }
+
+  /*//////////////////////////////////////////////////////////////////////*/
 
   function getdescription(gif) {
     const descriptions = gif.media
@@ -205,6 +210,8 @@
       return media.tagName === "IMG";
     });
   }
+
+  /*//////////////////////////////////////////////////////////////////////*/
 
   function showreplacement(gif, mode) {
     const mediatohide = getmediatohide(gif);
@@ -279,6 +286,8 @@
     showreplacement(gif, option.mode);
   }
 
+  /*//////////////////////////////////////////////////////////////////////*/
+
   function scan(node) {
     const element = node.nodeType === 1 ? node : node.parentElement;
     if (element) {
@@ -310,13 +319,14 @@
     }
   });
 
+  /*//////////////////////////////////////////////////////////////////////*/
+
   observer.observe(document, {
     attributes: true,
     attributeFilter: ["src", "srcset", "data-src", "data-url", "data-tenor-id", "data-gif-id", "data-gif", "alt", "aria-label", "title", "class"],
     characterData: true,
-    childList: true,
-    subtree: true
+    childList: true, subtree: true
   });
-
   scan(document);
+
 })();
