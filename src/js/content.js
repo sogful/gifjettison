@@ -157,8 +157,10 @@
   }
 
   function setclass(element, name, enabled) {
-    if (!element) return;
-    element.classList.toggle(name, enabled);
+    if (!element) return false;
+    const changed = element.classList.contains(name) !== enabled;
+    if (changed) element.classList.toggle(name, enabled);
+    return changed;
   }
 
   function clearreplacement(gif) {
@@ -246,7 +248,6 @@
     const hiddenmedia = comment.querySelectorAll("." + hiddenmediaclass);
     const placeholder = comment.querySelector("." + placeholderclass);
     if (!hadhiddencomment && hiddenmedia.length === 0 && !placeholder) {
-      if (thread?.classList.contains(hiddencommentclass)) refreshthread(thread);
       return;
     }
 
@@ -255,7 +256,7 @@
       setclass(media, hiddenmediaclass, false);
     });
     placeholder?.remove();
-    refreshthread(thread);
+    if (hadhiddencomment) refreshthread(thread);
   }
 
   function refreshthread(thread) {
@@ -280,27 +281,40 @@
 
     if (option.mode === "remove") {
       clearreplacement(gif);
-      setclass(comment, hiddencommentclass, true);
-      refreshthread(comment.closest("ytd-comment-thread-renderer"));
+      if (setclass(comment, hiddencommentclass, true)) {
+        refreshthread(comment.closest("ytd-comment-thread-renderer"));
+      }
       return;
     }
 
-    setclass(comment, hiddencommentclass, false);
-    refreshthread(comment.closest("ytd-comment-thread-renderer"));
+    if (setclass(comment, hiddencommentclass, false)) {
+      refreshthread(comment.closest("ytd-comment-thread-renderer"));
+    }
     showreplacement(gif, option.mode);
   }
 
   /*//////////////////////////////////////////////////////////////////////*/
 
-  function scan(node) {
+  function collectparentcomment(node, comments) {
     const element = node.nodeType === 1 ? node : node.parentElement;
-    if (element) {
-      const comment = element.matches(commentselector) ? element : element.closest(commentselector);
-      if (comment) applycomment(comment);
-    }
+    if (!element || element.nodeType !== 1) return;
+    const comment = element.matches(commentselector) ? element : element.closest(commentselector);
+    if (comment) comments.add(comment);
+  }
+
+  function collectcomments(node, comments) {
+    const element = node.nodeType === 1 || node.nodeType === 9 ? node : node.parentElement;
+    if (!element) return;
+    collectparentcomment(element, comments);
     if (node.querySelectorAll) {
-      for (const comment of node.querySelectorAll(commentselector)) applycomment(comment);
+      for (const comment of node.querySelectorAll(commentselector)) comments.add(comment);
     }
+  }
+
+  function scan(node) {
+    const comments = new Set();
+    collectcomments(node, comments);
+    for (const comment of comments) applycomment(comment);
   }
 
   window.addEventListener("message", event => {
@@ -309,18 +323,55 @@
     scan(document);
   });
 
+  const pendingcomments = new Set();
+  const pendingthreads = new Set();
+  let scanqueued = false;
+
+  function flushmutations() {
+    scanqueued = false;
+    const comments = Array.from(pendingcomments);
+    const threads = Array.from(pendingthreads);
+    pendingcomments.clear();
+    pendingthreads.clear();
+    for (const comment of comments) applycomment(comment);
+    for (const thread of threads) refreshthread(thread);
+  }
+
+  function schedulemutations() {
+    if (scanqueued) return;
+    scanqueued = true;
+    queueMicrotask(flushmutations);
+  }
+
   const observer = new MutationObserver(mutations => {
     for (const mutation of mutations) {
-      if (mutation.type === "attributes" || mutation.type === "characterData") {
-        scan(mutation.target);
+      const target = mutation.target.nodeType === 1 ? mutation.target : mutation.target.parentElement;
+      if (!target && mutation.type !== "childList") continue;
+
+      if (mutation.type === "attributes") {
+        if (mutation.attributeName === "class" &&
+          !target.matches(mediaselector) &&
+          !target.matches(".emoji")) continue;
+        collectparentcomment(target, pendingcomments);
         continue;
       }
-      const parent = mutation.target.nodeType === 1 ? mutation.target : mutation.target.parentElement;
-      if (parent && (parent.closest(commentselector) || parent.closest("ytd-comment-thread-renderer"))) {
-        scan(parent);
+
+      if (mutation.type === "characterData") {
+        collectparentcomment(target, pendingcomments);
+        continue;
       }
-      for (const node of mutation.addedNodes) scan(node);
+
+      if (target) collectparentcomment(target, pendingcomments);
+      const thread = target?.closest("ytd-comment-thread-renderer");
+      if (thread && Array.from(mutation.removedNodes).some(node => {
+        return node.nodeType === 1 && (
+          node.matches(commentselector) ||
+          node.querySelector(commentselector)
+        );
+      })) pendingthreads.add(thread);
+      for (const node of mutation.addedNodes) collectcomments(node, pendingcomments);
     }
+    if (pendingcomments.size || pendingthreads.size) schedulemutations();
   });
 
   /*//////////////////////////////////////////////////////////////////////*/

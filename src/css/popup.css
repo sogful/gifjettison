@@ -86,7 +86,6 @@
   min-width: 0;
   padding: 10px;
   background: var(--surfacecard);
-  border: 1px solid var(--line);
   border-radius: 12px;
 }
 
