@@ -1,11 +1,12 @@
 (() => {
   const commentselector = "ytd-comment-view-model, ytd-comment-renderer";
   const mediaselector = "img, video, source, [role='img'], [data-tenor-id], [data-gif-id], [data-gif]";
-  const gifurl = /(?:\.gif(?:[?#]|$)|(?:^|[/:.])tenor(?:\.|\/)|(?:^|[/:.])giphy(?:\.|\/))/i;
+  const gifurl = /(?:\.gif(?:[?#\s,]|$)|_webp_animated(?:_[^/?#\s,]+)?\.webp|(?:^|[/:.])tenor(?:\.|\/)|(?:^|[/:.])giphy(?:\.|\/))/i;
+  const gifmarker = /\[\s*gif\s*:\s*(?:giphy|tenor)\s*:/i;
   const giflabel = /\bgif\b/i;
 
   function hasgif(comment) {
-    if (comment.hasAttribute("data-tenor-id") || comment.hasAttribute("data-gif-id")) {
+    if (comment.hasAttribute("data-tenor-id") || comment.hasAttribute("data-gif-id") || gifmarker.test(comment.textContent || "")) {
       return true;
     }
 
@@ -60,7 +61,7 @@
 
   const observer = new MutationObserver(mutations => {
     for (const mutation of mutations) {
-      if (mutation.type === "attributes") {
+      if (mutation.type === "attributes" || mutation.type === "characterData") {
         scan(mutation.target);
         continue;
       }
@@ -73,7 +74,8 @@
 
   observer.observe(document, {
     attributes: true,
-    attributeFilter: ["src", "srcset", "data-src", "data-tenor-id", "data-gif-id", "data-gif", "alt", "aria-label", "title"],
+    attributeFilter: ["src", "srcset", "data-src", "data-tenor-id", "data-gif-id", "data-gif", "alt", "aria-label", "title", "class"],
+    characterData: true,
     childList: true,
     subtree: true
   });
