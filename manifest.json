@@ -5,6 +5,13 @@
   "description": "hide gif comments under youtube videos!",
   "author": "cv",
   "homepage_url": "https://coolsite.cv",
+  "permissions": [
+    "storage"
+  ],
+  "action": {
+    "default_title": "GifJettison",
+    "default_popup": "popup.html"
+  },
   "browser_specific_settings": {
     "gecko": {
       "id": "gifjettison@cv",
@@ -12,6 +19,11 @@
     }
   },
   "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "js": ["settings.js"],
+      "run_at": "document_start"
+    },
     {
       "matches": ["https://www.youtube.com/*"],
       "css": ["content.css"],
