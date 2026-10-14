@@ -10,6 +10,16 @@
       return true;
     }
 
+    const model = typeof comment.get === "function" ? comment.get("__data") : null;
+    const attachment = typeof comment.get === "function" ? comment.get("imageAttachment") : null;
+    const imageattachment = attachment || model?.imageAttachment || comment.imageAttachment;
+    const image = imageattachment?.image;
+    const sources = Array.isArray(image?.sources) ? image.sources : [];
+
+    if (image?.imageFormatHint === "IMAGE_FORMAT_ANIMATED_WEBP" || sources.some(source => source.url && gifurl.test(source.url))) {
+      return true;
+    }
+
     for (const media of comment.querySelectorAll(mediaselector)) {
       if (media.closest("#author-thumbnail, #author-photo, #author")) {
         continue;
@@ -40,6 +50,7 @@
   function hidegifcomment(comment) {
     if (hasgif(comment)) {
       comment.setAttribute("data-gif-comment-hidden", "");
+      comment.closest("ytd-comment-thread-renderer")?.setAttribute("data-gif-comment-hidden", "");
     }
   }
 

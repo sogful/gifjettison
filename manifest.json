@@ -16,6 +16,7 @@
       "matches": ["https://www.youtube.com/*"],
       "css": ["content.css"],
       "js": ["content.js"],
+      "world": "MAIN",
       "run_at": "document_start"
     }
   ]
