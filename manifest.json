@@ -6,11 +6,22 @@
   "author": "cv",
   "homepage_url": "https://coolsite.cv",
   "permissions": [
-    "storage"
+    "storage",
+    "activeTab"
   ],
+  "icons": {
+    "16": "assets/images/icon16.png",
+    "48": "assets/images/icon48.png",
+    "128": "assets/images/icon128.png",
+    "512": "assets/images/icon512.png"
+  },
   "action": {
     "default_title": "GifJettison",
-    "default_popup": "popup.html"
+    "default_popup": "src/popup.html",
+    "default_icon": {
+      "16": "assets/images/icon16.png",
+      "48": "assets/images/icon48.png"
+    }
   },
   "browser_specific_settings": {
     "gecko": {
@@ -21,13 +32,13 @@
   "content_scripts": [
     {
       "matches": ["https://www.youtube.com/*"],
-      "js": ["settings.js"],
+      "js": ["src/js/settings.js"],
       "run_at": "document_start"
     },
     {
       "matches": ["https://www.youtube.com/*"],
-      "css": ["content.css"],
-      "js": ["content.js"],
+      "css": ["src/css/content.css"],
+      "js": ["src/js/content.js"],
       "world": "MAIN",
       "run_at": "document_start"
     }

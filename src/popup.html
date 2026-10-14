@@ -1,0 +1,110 @@
+<!doctype html>
+<html class="popup" lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="css/popup.css">
+    <script src="js/popup.js" defer></script>
+  </head>
+  <body class="popupbody">
+    <main class="popupmain">
+      <header class="popupheader">
+        <img class="popupicon" src="../assets/svgs/icon.svg" alt="">
+      </header>
+
+      <form class="settingsform" aria-busy="true">
+        <section class="category normalcategory">
+          <label class="categoryheading">
+            <span class="categorytitle">Hide normal GIFs</span>
+            <input class="categorytoggle normaltoggle" type="checkbox" checked>
+          </label>
+          <p class="description">Remove comments containing GIFs that YouTube allows posting.</p>
+          <p class="fineprint">
+            YouTube only allows uploading G/PG Tenor GIFs, however it is
+            <a
+              class="fineprintlink"
+              href="https://files.catbox.moe/bd1leu.jpg"
+              target="_blank"
+              rel="noopener"
+            >possible to bypass the platform's filters</a>.
+          </p>
+          <fieldset class="modeoptions normalmodes">
+            <legend class="modelegend">When a GIF is found</legend>
+            <label class="modechoice">
+              <input class="modeinput" type="radio" name="normalmode" value="alt">
+              <span class="modetitle">Replace with [GIF]</span>
+              <span class="modedescription">Shows a [GIF] label instead of the actual GIF.</span>
+            </label>
+            <label class="modechoice">
+              <input class="modeinput" type="radio" name="normalmode" value="remove" checked>
+              <span class="modetitle">Remove</span>
+            </label>
+          </fieldset>
+        </section>
+
+        <section class="category ytgccategory">
+          <label class="categoryheading">
+            <span class="categorytitle">Hide "YouTube GIF Comments" GIFs</span>
+            <input class="categorytoggle ytgctoggle" type="checkbox" checked>
+          </label>
+          <p class="description">
+            Remove comments containing fake GIFs from
+            <a
+              class="descriptionlink"
+              href="https://chromewebstore.google.com/detail/youtube-gif-comments/fogcfkjicadghgcpicdfgmmdldedgnhl"
+              target="_blank"
+              rel="noopener"
+            >YouTube GIF Comments</a>.
+          </p>
+          <p class="fineprint">This extension loads any Tenor GIF regardless of its age rating, so it is recommended to turn this on.</p>
+          <fieldset class="modeoptions ytgcmodes">
+            <legend class="modelegend">When a GIF is found</legend>
+            <label class="modechoice">
+              <input class="modeinput" type="radio" name="ytgcmode" value="alt">
+              <span class="modetitle">Replace with alt text</span>
+              <span class="modedescription">Shows the GIF's description instead of the actual GIF.</span>
+            </label>
+            <label class="modechoice">
+              <input class="modeinput" type="radio" name="ytgcmode" value="text">
+              <span class="modetitle">Replace with text</span>
+              <span class="modedescription">Uses the raw comment the extension renders the GIF from.</span>
+            </label>
+            <label class="modechoice">
+              <input class="modeinput" type="radio" name="ytgcmode" value="remove" checked>
+              <span class="modetitle">Remove</span>
+            </label>
+          </fieldset>
+        </section>
+
+        <section class="category giftubecategory">
+          <label class="categoryheading">
+            <span class="categorytitle">Hide "GifTube" GIFs</span>
+            <input class="categorytoggle giftubetoggle" type="checkbox" checked>
+          </label>
+          <p class="description">
+            Remove comments containing fake GIFs from
+            <a
+              class="descriptionlink"
+              href="https://chromewebstore.google.com/detail/youtube-gif-comments/mgokeljfnihjbcmblpceeciccjeacpdm"
+              target="_blank"
+              rel="noopener"
+            >GifTube</a>.
+          </p>
+          <p class="fineprint">This extension tries loading from any URL, so it is highly recommended to turn this on.</p>
+          <fieldset class="modeoptions giftubemodes">
+            <legend class="modelegend">When a GIF is found</legend>
+            <label class="modechoice">
+              <input class="modeinput" type="radio" name="giftubemode" value="text">
+              <span class="modetitle">Replace with text</span>
+              <span class="modedescription">Uses the raw comment the extension renders the GIF from.</span>
+            </label>
+            <label class="modechoice">
+              <input class="modeinput" type="radio" name="giftubemode" value="remove" checked>
+              <span class="modetitle">Remove</span>
+            </label>
+          </fieldset>
+        </section>
+      </form>
+    </main>
+  </body>
+</html>

@@ -1,8 +1,9 @@
 (() => {
   const storage = globalThis.browser?.storage || globalThis.chrome?.storage;
+  const runtime = globalThis.browser?.runtime || globalThis.chrome?.runtime;
   if (!storage?.local) return;
 
-  const storageKey = "gifjettisonSettings";
+  const storagekey = "gifjettisonSettings";
   const defaults = {
     normal: { enabled: true, mode: "remove" },
     ytgc: { enabled: true, mode: "remove" },
@@ -28,14 +29,20 @@
 
   async function broadcast() {
     try {
-      const stored = await storage.local.get(storageKey);
-      const settings = normalize(stored?.[storageKey]);
-      window.postMessage({ channel: "gifjettison-settings", settings }, "*");
+      const stored = await storage.local.get(storagekey);
+      const settings = normalize(stored?.[storagekey]);
+      window.postMessage({ channel: "gifjettisonsettings", settings }, "*");
     } catch (_) {}
   }
 
+  runtime?.onMessage?.addListener?.((message, sender, sendresponse) => {
+    if (message?.type !== "gifjettisontheme") return undefined;
+    sendresponse({ theme: document.documentElement.hasAttribute("dark") ? "dark" : "light" });
+    return false;
+  });
+
   broadcast();
-  storage.onChanged?.addListener((changes, areaName) => {
-    if (areaName === "local" && changes[storageKey]) broadcast();
+  storage.onChanged?.addListener((changes, areaname) => {
+    if (areaname === "local" && changes[storagekey]) broadcast();
   });
 })();
