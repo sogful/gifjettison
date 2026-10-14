@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "GifJettison",
+  "version": "1.0",
+  "description": "hide gif comments under youtube videos!",
+  "content_scripts": [
+    {
+      "matches": ["https://www.youtube.com/*"],
+      "css": ["content.css"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ]
+}
