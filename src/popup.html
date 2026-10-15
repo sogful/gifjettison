@@ -8,14 +8,11 @@
   </head>
   <body class="popupbody">
     <main class="popupmain">
-      <header class="popupheader">
-        <img class="popupicon" src="../assets/svgs/icon.svg">
-      </header>
 
       <form class="settingsform" aria-busy="true">
         <section class="category normalcategory">
           <label class="categoryheading">
-            <span class="categorytitle">Hide normal GIFs</span>
+            <span class="categorytitle">Remove normal GIFs</span>
             <input class="categorytoggle normaltoggle" type="checkbox" checked>
           </label>
           <p class="description">Remove comments containing GIFs that YouTube allows posting.</p>
@@ -39,7 +36,7 @@
 
         <section class="category ytgccategory">
           <label class="categoryheading">
-            <span class="categorytitle">Hide "YouTube GIF Comments" GIFs</span>
+            <span class="categorytitle">Remove "YouTube GIF Comments" GIFs</span>
             <input class="categorytoggle ytgctoggle" type="checkbox" checked>
           </label>
           <p class="description">
@@ -49,11 +46,6 @@
           <p class="fineprint">This extension loads any Tenor GIF regardless of its age rating, so it is recommended to turn this on.</p>
           <fieldset class="modeoptions ytgcmodes">
             <legend class="modelegend">When a GIF is found</legend>
-            <label class="modechoice">
-              <input class="modeinput" type="radio" name="ytgcmode" value="alt">
-              <span class="modetitle">Replace with alt text</span>
-              <span class="modedescription">Shows the GIF's description instead of the actual GIF.</span>
-            </label>
             <label class="modechoice">
               <input class="modeinput" type="radio" name="ytgcmode" value="text">
               <span class="modetitle">Replace with text</span>
@@ -68,7 +60,7 @@
 
         <section class="category giftubecategory">
           <label class="categoryheading">
-            <span class="categorytitle">Hide "GifTube" GIFs</span>
+            <span class="categorytitle">Remove "GifTube" GIFs</span>
             <input class="categorytoggle giftubetoggle" type="checkbox" checked>
           </label>
           <p class="description">

@@ -80,7 +80,7 @@
       if (text) return text;
     }
 
-    const body = comment.querySelector("#content-text, yt-attributed-string#content-text, [id='content-text']");
+    const body = comment.querySelector("yt-attributed-string[slot='content'], ytd-expander yt-formatted-string, #content-text, yt-attributed-string#content-text, [id='content-text']");
     return (body?.innerText || body?.textContent || "").trim();
   }
 
@@ -99,8 +99,12 @@
   }
 
   function isemoji(media) {
-    return media.matches("img#emoji, [data-emoji], ytd-emoji-renderer img, .emoji img") ||
-      Boolean(media.closest("ytd-emoji-renderer"));
+    const alt = media.getAttribute("alt") || "";
+    const values = mediavalues(media).join(" ");
+    return media.matches("img#emoji, [data-emoji], ytd-emoji-renderer img, .emoji img, .ytAttributedStringImageElement") ||
+      Boolean(media.closest("ytd-emoji-renderer")) ||
+      /(?:emoji|emote)/i.test(values) ||
+      /\p{Extended_Pictographic}/u.test(alt);
   }
 
   function isauthormedia(media) {
@@ -125,10 +129,18 @@
     const attachment = getattachment(comment, model);
     const image = attachment?.image;
     const sources = Array.isArray(image?.sources) ? image.sources : [];
-    const official = image?.imageFormatHint === "IMAGE_FORMAT_ANIMATED_WEBP" ||
-      sources.some(source => source?.url && gifurl.test(source.url));
-    const rawtext = getrawtext(comment, model);
+    const officialhost = comment.querySelector("ytw-comment-image-attachment-view-model, ytd-comment-image-attachment-renderer");
+    const current = comment.querySelector("." + placeholderclass);
+    const cachedcategory = current?.gifcategory;
+    const rawtext = current?.gifsourcetext || getrawtext(comment, model);
     const media = getmedia(comment);
+    if (cachedcategory === "normal" || cachedcategory === "ytgc" || cachedcategory === "giftube") {
+      return {category: cachedcategory, comment, model, attachment, image, rawtext, media};
+    }
+
+    const official = Boolean(officialhost) ||
+      image?.imageFormatHint === "IMAGE_FORMAT_ANIMATED_WEBP" ||
+      sources.some(source => source?.url && gifurl.test(source.url));
     const values = media.flatMap(mediavalues);
     const tenoredmedia = media.some(item =>
       item.hasAttribute("data-tenor-id") ||
@@ -147,8 +159,7 @@
       item.tagName === "VIDEO" ||
       item.hasAttribute("data-gif") ||
       item.hasAttribute("data-gif-id") ||
-      gifurl.test(mediavalues(item).join(" ")) ||
-      item.tagName === "IMG"
+      gifurl.test(mediavalues(item).join(" "))
     );
     if (renderedmedia || standaloneurl.test(rawtext)) {
       return {category: "giftube", comment, model, attachment, image, rawtext, media};
@@ -167,6 +178,9 @@
     for (const media of gif.media) setclass(media, hiddenmediaclass, false);
     gif.comment.querySelectorAll("." + hiddenmediaclass).forEach(media => {
       setclass(media, hiddenmediaclass, false);
+    });
+    gif.comment.querySelectorAll(".gifrawhidden").forEach(media => {
+      setclass(media, "gifrawhidden", false);
     });
     gif.comment.querySelector("." + placeholderclass)?.remove();
   }
@@ -197,10 +211,44 @@
   function getreplacementtext(gif, mode) {
     if (mode === "alt") return getdescription(gif);
     const raw = getrawreplacement(gif);
-    const visiblebody = gif.comment.querySelector("#content-text, yt-attributed-string#content-text, [id='content-text']");
-    const visibletext = (visiblebody?.innerText || visiblebody?.textContent || "").trim();
-    if (visibletext && raw && visibletext.includes(raw)) return "";
     return raw || "[GIF]";
+  }
+
+  function getcontentbody(comment) {
+    return comment.querySelector("yt-attributed-string[slot='content'], ytd-expander yt-formatted-string, #content-text, yt-attributed-string#content-text, [id='content-text']");
+  }
+
+  function replacevisiblemarker(gif, text) {
+    const raw = getrawreplacement(gif);
+    const body = getcontentbody(gif.comment);
+    if (!raw || !body) return null;
+
+    const walker = document.createTreeWalker(body, NodeFilter.SHOW_TEXT);
+    let node;
+    while ((node = walker.nextNode())) {
+      if (node.parentElement?.closest("." + placeholderclass + ", .gifrawhidden")) continue;
+      const value = node.nodeValue || "";
+      const start = value.indexOf(raw);
+      if (start < 0) continue;
+
+      const rawmarker = document.createElement("span");
+      rawmarker.classList.add("gifrawhidden");
+      rawmarker.textContent = raw;
+      const placeholder = document.createElement("span");
+      placeholder.classList.add(placeholderclass);
+      placeholder.textContent = text;
+      placeholder.gifcategory = gif.category;
+      placeholder.gifsourcetext = gif.rawtext;
+
+      const fragment = document.createDocumentFragment();
+      if (start > 0) fragment.appendChild(document.createTextNode(value.slice(0, start)));
+      fragment.append(rawmarker, placeholder);
+      const end = start + raw.length;
+      if (end < value.length) fragment.appendChild(document.createTextNode(value.slice(end)));
+      node.parentNode.replaceChild(fragment, node);
+      return placeholder;
+    }
+    return null;
   }
 
   function getmediatohide(gif) {
@@ -222,7 +270,7 @@
   function showreplacement(gif, mode) {
     const mediatohide = getmediatohide(gif);
     for (const media of mediatohide) {
-      const attachmentroot = media.closest("ytd-comment-attachment-renderer, ytd-comment-attachment-view-model, [class*='attachment']");
+      const attachmentroot = media.closest("ytw-comment-image-attachment-view-model, ytd-comment-image-attachment-renderer, ytd-comment-attachment-renderer, ytd-comment-attachment-view-model, [class*='attachment']");
       setclass(attachmentroot && attachmentroot !== gif.comment ? attachmentroot : media, hiddenmediaclass, true);
     }
 
@@ -233,12 +281,12 @@
       return;
     }
 
-    const body = gif.comment.querySelector("#body") ||
-      gif.comment.querySelector("#content-text, yt-attributed-string#content-text, [id='content-text']")?.parentElement ||
-      gif.comment;
-    const placeholder = current || document.createElement("span");
+    const placeholder = replacevisiblemarker(gif, text) || current || document.createElement("span");
+    const body = getcontentbody(gif.comment) || gif.comment.querySelector("#body") || gif.comment;
     placeholder.classList.add(placeholderclass);
     if (placeholder.textContent !== text) placeholder.textContent = text;
+    placeholder.gifcategory = gif.category;
+    placeholder.gifsourcetext = gif.rawtext;
     if (placeholder.parentElement !== body) body.appendChild(placeholder);
   }
 
@@ -246,14 +294,18 @@
     const thread = comment.closest("ytd-comment-thread-renderer");
     const hadhiddencomment = comment.classList.contains(hiddencommentclass);
     const hiddenmedia = comment.querySelectorAll("." + hiddenmediaclass);
+    const hiddenraw = comment.querySelectorAll(".gifrawhidden");
     const placeholder = comment.querySelector("." + placeholderclass);
-    if (!hadhiddencomment && hiddenmedia.length === 0 && !placeholder) {
+    if (!hadhiddencomment && hiddenmedia.length === 0 && hiddenraw.length === 0 && !placeholder) {
       return;
     }
 
     setclass(comment, hiddencommentclass, false);
     hiddenmedia.forEach(media => {
       setclass(media, hiddenmediaclass, false);
+    });
+    hiddenraw.forEach(media => {
+      setclass(media, "gifrawhidden", false);
     });
     placeholder?.remove();
     if (hadhiddencomment) refreshthread(thread);

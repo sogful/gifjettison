@@ -1,4 +1,5 @@
 .gifcommenthidden, .gifmediahidden {display: none !important}
+.gifrawhidden {display: none !important}
 .gifplaceholder {
   color: var(--yt-spec-text-secondary, #606060) !important;
   font-style: italic !important;
