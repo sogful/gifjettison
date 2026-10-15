@@ -53,7 +53,7 @@
       if (typeof comment.get === "function") {
         return comment.get("__data") || comment.__data || {};
       }
-    } catch (_) {}
+    } catch (error) {}
     return comment.__data || {};
   }
 
@@ -63,7 +63,7 @@
         const attachment = comment.get("imageAttachment");
         if (attachment) return attachment;
       }
-    } catch (_) {}
+    } catch (error) {}
     return model.imageAttachment || comment.imageAttachment || null;
   }
 
@@ -73,7 +73,7 @@
       if (typeof comment.get === "function") {
         candidates.push(comment.get("comment"), comment.get("commentText"), comment.get("text"));
       }
-    } catch (_) {}
+    } catch (error) {}
     candidates.push(model.comment, model.commentText, model.text);
     for (const candidate of candidates) {
       const text = flattentext(candidate).trim();

@@ -191,3 +191,23 @@
   font-size: 10px;
   line-height: 1.3;
 }
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  background: rgba(0,0,0,0.55);
+}
+
+.settingsbox.popupbody {
+  width: min(440px, calc(100vw - 24px), calc(100vh - 24px));
+  aspect-ratio: 1 / 1;
+  overflow: auto;
+  border-radius: 12px;
+}
+
+.settingsbox.popupbody:focus {
+  outline: none;
+}
