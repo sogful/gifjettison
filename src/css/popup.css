@@ -74,10 +74,8 @@
   border-radius: 12px;
 }
 
-.giftubecategory {
+.normalcategory {
   grid-column: 1 / -1;
-  width: calc(50% - 4px);
-  justify-self: center;
 }
 
 .categoryheading {
@@ -91,6 +89,12 @@
 }
 
 .categorytitle {flex: 1}
+
+.categoryicon {
+  flex: 0 0 20px;
+  width: 20px; height: 20px;
+  object-fit: contain;
+}
 
 .categorytoggle {
   appearance: none;
