@@ -1,0 +1,14 @@
+<p align="center"><img src="assets\svgs\icon.svg" width="75"></p>
+<h1>GifJettison</h1>
+
+this extension just hides gifs from youtube comment sections the way you want to hide them, that's all!
+<hr>
+to install on chrome, simply clone the repository, enable developer mode in chrome extensions and "load unpacked", pointing to the cloned repo. <br><br>
+to install on firefox, use firefox nightly/dev. if those don't work, then the firefox versions you're installing are too gated and you might need to find a workaround.
+
+## supported types
+
+- Youtube
+- [YouTube GIF Comments](https://chromewebstore.google.com/detail/youtube-gif-comments/fogcfkjicadghgcpicdfgmmdldedgnhl)
+- [GifTube](https://chromewebstore.google.com/detail/youtube-gif-comments/mgokeljfnihjbcmblpceeciccjeacpdm) <br>
+<sup><sup>(funnily enough, it's also titled "YouTube GIF Comments".. it's called GifTube in the extension for distinction)</sup></sup>
