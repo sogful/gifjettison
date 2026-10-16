@@ -231,7 +231,7 @@
       try {
         await GM_setValue(storagekey, settings);
       } catch (error) {
-        console.error("GifJettison could not save userscript settings.", error);
+        console.error("Couldnt save userscript settings?!", error);
       }
     });
 

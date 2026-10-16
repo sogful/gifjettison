@@ -12,8 +12,7 @@ function asseturl(file, type) {
 }
 
 const popupcss = read("src/css/popup.css")
-  .replaceAll("../../assets/fonts/robotolatin.woff2", asseturl("assets/fonts/robotolatin.woff2", "font/woff2"))
-  .replaceAll("../../assets/fonts/robotocyrillic.woff2", asseturl("assets/fonts/robotocyrillic.woff2", "font/woff2"));
+  .replaceAll("../../assets/fonts/robotolatin.woff2", asseturl("assets/fonts/robotolatin.woff2", "font/woff2"));
 let menu = read(".github/userscriptmenu.js").trim()
   .replace("replacepopupcss", JSON.stringify(popupcss));
 
@@ -29,8 +28,8 @@ const header = [
   "// @name         GifJettison",
   "// @namespace    https://github.com/sogful/gifjettison",
   "// @version      " + manifest.version,
-  "// @description  Hide GIF comments on YouTube.",
-  "// @author       " + (manifest.author || "cv"),
+  "// @description  hide gif comments under youtube videos!",
+  "// @author       " + manifest.author,
   "// @match        https://www.youtube.com/*",
   "// @updateURL    " + downloadurl,
   "// @downloadURL  " + downloadurl,
